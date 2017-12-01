@@ -21,6 +21,6 @@ public extension String {
      - Returns: A new string with the path extension removed
      */
     public var stringByDeletingPathExtension: String {
-        return NSString(string: self).stringByDeletingPathExtension
+        return NSString(string: self).deletingPathExtension
     }
 }

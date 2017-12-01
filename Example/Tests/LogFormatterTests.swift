@@ -15,7 +15,7 @@ class LogFormatterTests: XCTestCase {
     let arbitraryColumn = #column
     let arbitraryFunction = "someFunction(_:)"
     let arbitraryFile = #file
-    let arbitraryLogLevel: Logger.LogLevel = .All
+    let arbitraryLogLevel: Logger.LogLevel = .all
     let arbitraryMessage = "some_message goes here"
     let arbitraryTerminator = ",<arnold schwartzernegger>"
     let arbitraryDateFormat = "dd/MM/YYYYTHH:mm:ss Z"
@@ -38,13 +38,13 @@ class LogFormatterTests: XCTestCase {
     func logFormatForAllAttributes() -> LogFormat {
         let template = "[%@],[%@],[%@],[%@],[%@],[%@],[%@]"
         let logFormat = LogFormat(template: template, attributes: [
-            LogFormatter.Attributes.Column,
-            LogFormatter.Attributes.Date(format: arbitraryDateFormat),
-            LogFormatter.Attributes.FileName(fullPath: false, fileExtension: false),
-            LogFormatter.Attributes.Function,
-            LogFormatter.Attributes.Level,
-            LogFormatter.Attributes.Line,
-            LogFormatter.Attributes.Message
+            LogFormatter.Attributes.column,
+            LogFormatter.Attributes.date(format: arbitraryDateFormat),
+            LogFormatter.Attributes.fileName(fullPath: false, fileExtension: false),
+            LogFormatter.Attributes.function,
+            LogFormatter.Attributes.level,
+            LogFormatter.Attributes.line,
+            LogFormatter.Attributes.message
             ])
         
         return logFormat
@@ -57,7 +57,7 @@ class LogFormatterTests: XCTestCase {
         XCTAssertNotNil(arbitraryLogFormatter)
         XCTAssertEqual(arbitraryLogFormatter.logFormat.template, logFormat.template)
         XCTAssertEqual(arbitraryLogFormatter.logFormat.attributes!.count, logFormat.attributes!.count)
-        XCTAssertEqual(arbitraryLogFormatter.logLevel, Logger.LogLevel.All)
+        XCTAssertEqual(arbitraryLogFormatter.logLevel, Logger.LogLevel.all)
         XCTAssertEqual(arbitraryLogFormatter.filePath, arbitraryFile)
         XCTAssertEqual(arbitraryLogFormatter.line, arbitraryLine)
         XCTAssertEqual(arbitraryLogFormatter.column, arbitraryColumn)
@@ -73,18 +73,18 @@ class LogFormatterTests: XCTestCase {
         let logMessage = arbitraryLogFormatter.formattedLogMessage()
         
         // Separate the attributes out by ,
-        var attributes = logMessage.componentsSeparatedByString(",")
+        var attributes = logMessage.components(separatedBy: ",")
         
         // The terminator exists as the last element, as we have purposely left a trailing comma in the log format
         // It needs to be removed in order to do the correct array comparison
         
         attributes.popLast()
         
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = arbitraryDateFormat
         
         // Format the date as per the log format
-        let expectedDate = dateFormatter.stringFromDate(arbitraryLogFormatter.date)
+        let expectedDate = dateFormatter.string(from: arbitraryLogFormatter.date)
         
         // List the values we expect to exist at each index in the array
         let expectedAttributeValues = [
@@ -92,7 +92,7 @@ class LogFormatterTests: XCTestCase {
             "[\(expectedDate)]",
             "[\(arbitraryLogFormatter.filePath.lastPathComponent.stringByDeletingPathExtension)]",
             "[\(arbitraryLogFormatter.function)]",
-            "[\(arbitraryLogFormatter.logLevel.description.uppercaseString)]",
+            "[\(arbitraryLogFormatter.logLevel.description.uppercased())]",
             "[\(arbitraryLogFormatter.line)]",
             "[\(arbitraryLogFormatter.message)]"
         ]
@@ -103,16 +103,16 @@ class LogFormatterTests: XCTestCase {
         XCTAssertEqual(expectedAttributeValues.count, attributes.count)
         
         // Compare each of the expected attribute values to the attribute value found in the log message
-        for (idx, attr) in attributes.enumerate() {
+        for (idx, attr) in attributes.enumerated() {
             XCTAssertEqual(attr, expectedAttributeValues[idx])
         }
         
         // Combine the expected attribute values as per the log format
-        let expectedMessage = expectedAttributeValues.reduce("", combine: {
-            if $0.0.characters.count == 0 {
-                return $0.1
+        let expectedMessage = expectedAttributeValues.reduce("", {
+            if $0.characters.count == 0 {
+                return $1
             }
-            return $0.0 + ",\($0.1)"
+            return $0 + ",\($1)"
         }) + arbitraryLogFormatter.terminator
         
         // Ensure that the generated log message and the one we have created are identical
@@ -127,7 +127,7 @@ class LogFormatterTests: XCTestCase {
         let message = "some message"
         
         let emptyFormat = LogFormat(template: "", attributes: nil)
-        let logFormatter = LogFormatter(format: emptyFormat, logLevel: .All, filePath: #file, line: #line, column: #column, function: #function, message: message, terminator: "")
+        let logFormatter = LogFormatter(format: emptyFormat, logLevel: .all, filePath: #file, line: #line, column: #column, function: #function, message: message, terminator: "")
         XCTAssertEqual(logFormatter.formattedLogMessage(), message)
     }
     
@@ -135,7 +135,7 @@ class LogFormatterTests: XCTestCase {
         let message = "some message"
         
         let emptyFormat = LogFormat(template: "", attributes: [])
-        let logFormatter = LogFormatter(format: emptyFormat, logLevel: .All, filePath: #file, line: #line, column: #column, function: #function, message: message, terminator: "")
+        let logFormatter = LogFormatter(format: emptyFormat, logLevel: .all, filePath: #file, line: #line, column: #column, function: #function, message: message, terminator: "")
         XCTAssertEqual(logFormatter.formattedLogMessage(), message)
     }
     
@@ -145,11 +145,11 @@ class LogFormatterTests: XCTestCase {
     }
     
     func testGeneratesCorrectReadableDate() {
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = arbitraryDateFormat
         
         // Format the date as per the log format
-        let expectedDate = dateFormatter.stringFromDate(arbitraryLogFormatter.date)
+        let expectedDate = dateFormatter.string(from: arbitraryLogFormatter.date)
         XCTAssertEqual(expectedDate, arbitraryLogFormatter.readableDate(arbitraryLogFormatter.date, format: arbitraryDateFormat))
     }
     
@@ -175,7 +175,7 @@ class LogFormatterTests: XCTestCase {
     }
     
     func testGeneratesCorrectReadableLogLevel() {
-        let expectedOutput = arbitraryLogLevel.description.uppercaseString
+        let expectedOutput = arbitraryLogLevel.description.uppercased()
         XCTAssertEqual(expectedOutput, arbitraryLogFormatter.readableLogLevel(arbitraryLogLevel))
     }
     

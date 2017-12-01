@@ -12,7 +12,7 @@ import Timber
 class Logger_SingletonTests: XCTestCase {
 
     func testSetFormat() {
-        let format = LogFormat(template: "%@ %@", attributes: [LogFormatter.Attributes.Level, LogFormatter.Attributes.Level])
+        let format = LogFormat(template: "%@ %@", attributes: [LogFormatter.Attributes.level, LogFormatter.Attributes.level])
         Logger.setFormat(format)
         
         XCTAssertEqual(Logger.shared.logFormat, format)
@@ -27,11 +27,11 @@ class Logger_SingletonTests: XCTestCase {
     }
     
     func testSetMinLevel() {
-        Logger.setMinLevel(.All)
-        XCTAssertEqual(Logger.shared.minLevel, Logger.LogLevel.All)
+        Logger.setMinLevel(.all)
+        XCTAssertEqual(Logger.shared.minLevel, Logger.LogLevel.all)
         
-        Logger.setMinLevel(.Warn)
-        XCTAssertEqual(Logger.shared.minLevel, Logger.LogLevel.Warn)
+        Logger.setMinLevel(.warn)
+        XCTAssertEqual(Logger.shared.minLevel, Logger.LogLevel.warn)
     }
     
     func testSetTerminator() {
@@ -48,10 +48,10 @@ class Logger_SingletonTests: XCTestCase {
         XCTAssertEqual(Logger.shared.separator, separator)
     }
     
-    func performTestWithExpectedLogLevel(expectedLogLevel: Logger.LogLevel) {
-        let expectation = expectationWithDescription(NSUUID().UUIDString + ": \(expectedLogLevel)")
+    func performTestWithExpectedLogLevel(_ expectedLogLevel: Logger.LogLevel) {
+        let expectation = self.expectation(description: UUID().uuidString + ": \(expectedLogLevel)")
         
-        let logMessage = NSUUID().UUIDString
+        let logMessage = UUID().uuidString
         
         let localLogger = StubbedLogger(loggedBlock: { level, message, _, _, _, _ in
             XCTAssertEqual(level, expectedLogLevel)
@@ -62,22 +62,22 @@ class Logger_SingletonTests: XCTestCase {
         Logger.shared = localLogger
         
         switch expectedLogLevel {
-        case .Debug:
+        case .debug:
             Logger.debug(logMessage)
             break
-        case .Error:
+        case .error:
             Logger.error(logMessage)
             break
-        case .Fatal:
+        case .fatal:
             Logger.fatal(logMessage)
             break
-        case .Info:
+        case .info:
             Logger.info(logMessage)
             break
-        case .Trace:
+        case .trace:
             Logger.trace(logMessage)
             break
-        case .Warn:
+        case .warn:
             Logger.warn(logMessage)
             break
         default:
@@ -85,34 +85,34 @@ class Logger_SingletonTests: XCTestCase {
             break
         }
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func testAllLogLevel() {
-        performTestWithExpectedLogLevel(.All)
+        performTestWithExpectedLogLevel(.all)
     }
     
     func testDebugLogLevel() {
-        performTestWithExpectedLogLevel(.Debug)
+        performTestWithExpectedLogLevel(.debug)
     }
     
     func testTraceLogLevel() {
-        performTestWithExpectedLogLevel(.Trace)
+        performTestWithExpectedLogLevel(.trace)
     }
     
     func testInfoLogLevel() {
-        performTestWithExpectedLogLevel(.Info)
+        performTestWithExpectedLogLevel(.info)
     }
     
     func testWarnLogLevel() {
-        performTestWithExpectedLogLevel(.Warn)
+        performTestWithExpectedLogLevel(.warn)
     }
     
     func testErrorLogLevel() {
-        performTestWithExpectedLogLevel(.Error)
+        performTestWithExpectedLogLevel(.error)
     }
     
     func testFatalLogLevel() {
-        performTestWithExpectedLogLevel(.Fatal)
+        performTestWithExpectedLogLevel(.fatal)
     }
 }

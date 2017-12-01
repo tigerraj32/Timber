@@ -9,37 +9,37 @@
 import Foundation
 
 /// Generates a log message formatted in accordance with the specified LogFormat
-public class LogFormatter {
+open class LogFormatter {
     
     /// The log format to be used
-    public let logFormat: LogFormat
+    open let logFormat: LogFormat
     
     /// The current log level
-    public let logLevel: Logger.LogLevel
+    open let logLevel: Logger.LogLevel
     
     /// The filePath of the initial log caller
-    public let filePath: String
+    open let filePath: String
     
     /// Determines the line in the source code of the caller.
-    public let line: Int
+    open let line: Int
     
     /// Determines the column in the source code of the caller.
-    public let column: Int
+    open let column: Int
     
     /// Determines the function that triggered the call.
-    public let function: String
+    open let function: String
     
     /// The log message as a string
-    public let message: String
+    open let message: String
     
     /// Sets the terminator of a log line in the console.
-    public let terminator: String
+    open let terminator: String
     
     /// The date/time of that the log request was made at
-    public let date: NSDate = NSDate()
+    open let date: Date = Date()
     
     /// The internal date formatter for the Attribute.date
-    private let dateFormatter = NSDateFormatter()
+    fileprivate let dateFormatter = DateFormatter()
     
     /**
      Initialises an instance of LogFormatter
@@ -69,26 +69,26 @@ public class LogFormatter {
      Concatenates the specified attributes in the LogFormat and generates the final log message
      - Returns: The final log message that will appear in the console/log file
      */
-    public func formattedLogMessage() -> String {
-        guard let attributes = logFormat.attributes where attributes.count > 0 else {
+    open func formattedLogMessage() -> String {
+        guard let attributes = logFormat.attributes, attributes.count > 0 else {
             return message
         }
         
-        let convertedAttributes = attributes.map { attribute -> CVarArgType in
+        let convertedAttributes = attributes.map { attribute -> CVarArg in
             switch attribute {
-            case .Level:
+            case .level:
                 return readableLogLevel(logLevel)
-            case .FileName(let fullPath, let fileExtension):
+            case .fileName(let fullPath, let fileExtension):
                 return readableFileName(filePath, showFullPath: fullPath, showFileExtension: fileExtension)
-            case .Line:
+            case .line:
                 return readableLine(line)
-            case .Column:
+            case .column:
                 return readableColumn(column)
-            case .Function:
+            case .function:
                 return readableFunction(function)
-            case .Message:
+            case .message:
                 return readableMessage(message)
-            case .Date(let format):
+            case .date(let format):
                 return readableDate(date, format: format)
             }
         }
@@ -101,8 +101,8 @@ public class LogFormatter {
      - Returns: A readable equivalent of the supplied log level
      */
     
-    public func readableLogLevel(logLevel: Logger.LogLevel) -> String {
-        return logLevel.description.uppercaseString
+    open func readableLogLevel(_ logLevel: Logger.LogLevel) -> String {
+        return logLevel.description.uppercased()
     }
     
     /**
@@ -113,7 +113,7 @@ public class LogFormatter {
      - Returns: A formatted version of the file path
      */
     
-    public func readableFileName(filePath: String, showFullPath: Bool, showFileExtension: Bool) -> String {
+    open func readableFileName(_ filePath: String, showFullPath: Bool, showFileExtension: Bool) -> String {
         var fileName = filePath
         if !showFullPath {
             fileName = fileName.lastPathComponent
@@ -130,7 +130,7 @@ public class LogFormatter {
      - Returns: A readable equivalent of the supplied line
      */
     
-    public func readableLine(line: Int) -> String {
+    open func readableLine(_ line: Int) -> String {
         return String(line)
     }
     
@@ -140,7 +140,7 @@ public class LogFormatter {
      - Returns: A readable equivalent of the supplied column
      */
     
-    public func readableColumn(column: Int) -> String {
+    open func readableColumn(_ column: Int) -> String {
         return String(column)
     }
     
@@ -150,7 +150,7 @@ public class LogFormatter {
      - Returns: A readable equivalent of the supplied function
      */
     
-    public func readableFunction(function: String) -> String {
+    open func readableFunction(_ function: String) -> String {
         return function
     }
     
@@ -160,7 +160,7 @@ public class LogFormatter {
      - Returns: A formatted version of the supplied message
      */
     
-    public func readableMessage(message: String) -> String {
+    open func readableMessage(_ message: String) -> String {
         return message
     }
     
@@ -170,8 +170,8 @@ public class LogFormatter {
      - Returns: A readable & formatted equivalent of the supplied date
      */
     
-    public func readableDate(date: NSDate, format: String) -> String {
+    open func readableDate(_ date: Date, format: String) -> String {
         dateFormatter.dateFormat = format
-        return dateFormatter.stringFromDate(date)
+        return dateFormatter.string(from: date)
     }
 }

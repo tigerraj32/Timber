@@ -12,22 +12,22 @@ import Timber
 class LogLevelTests: XCTestCase {
     func testEquality() {
         
-        let all = Logger.LogLevel.All
-        let off = Logger.LogLevel.Off
+        let all = Logger.LogLevel.all
+        let off = Logger.LogLevel.off
         
         XCTAssertNotEqual(all, off)
         XCTAssertFalse(all == off)
         
-        XCTAssertTrue(all == Logger.LogLevel.All)
+        XCTAssertTrue(all == Logger.LogLevel.all)
         XCTAssertTrue(all == all)
-        XCTAssertTrue(off == Logger.LogLevel.Off)
+        XCTAssertTrue(off == Logger.LogLevel.off)
         XCTAssertTrue(off == off)
         XCTAssertTrue(all != off)
     }
     
     func testLessThan() {
-        let all = Logger.LogLevel.All
-        let off = Logger.LogLevel.Off
+        let all = Logger.LogLevel.all
+        let off = Logger.LogLevel.off
         
         XCTAssertTrue(all < off)
         XCTAssertFalse(off < all)
@@ -35,8 +35,8 @@ class LogLevelTests: XCTestCase {
     }
     
     func testMoreThan() {
-        let all = Logger.LogLevel.All
-        let off = Logger.LogLevel.Off
+        let all = Logger.LogLevel.all
+        let off = Logger.LogLevel.off
         
         XCTAssertTrue(off > all)
         XCTAssertTrue(off >= all)
@@ -54,13 +54,13 @@ class LogLevelTests: XCTestCase {
     func testLogPriorities() {
         //        ALL < DEBUG < TRACE < INFO < WARN < ERROR < FATAL < OFF.
         XCTAssertTrue(
-            Logger.LogLevel.All < Logger.LogLevel.Debug &&
-                Logger.LogLevel.Debug < Logger.LogLevel.Trace &&
-                Logger.LogLevel.Trace < Logger.LogLevel.Info &&
-                Logger.LogLevel.Info < Logger.LogLevel.Warn &&
-                Logger.LogLevel.Warn < Logger.LogLevel.Error &&
-                Logger.LogLevel.Error < Logger.LogLevel.Fatal &&
-                Logger.LogLevel.Fatal < Logger.LogLevel.Off)
+            Logger.LogLevel.all < Logger.LogLevel.debug &&
+                Logger.LogLevel.debug < Logger.LogLevel.trace &&
+                Logger.LogLevel.trace < Logger.LogLevel.info &&
+                Logger.LogLevel.info < Logger.LogLevel.warn &&
+                Logger.LogLevel.warn < Logger.LogLevel.error &&
+                Logger.LogLevel.error < Logger.LogLevel.fatal &&
+                Logger.LogLevel.fatal < Logger.LogLevel.off)
     }
     
 }

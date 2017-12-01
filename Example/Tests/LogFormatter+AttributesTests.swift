@@ -11,13 +11,13 @@ import Timber
 
 class LogFormatter_AttributesTests: XCTestCase {
     func testEquatable() {
-        XCTAssertEqual(LogFormatter.Attributes.Level, LogFormatter.Attributes.Level)
-        XCTAssertEqual(LogFormatter.Attributes.FileName(fullPath: true, fileExtension: true), LogFormatter.Attributes.FileName(fullPath: true, fileExtension: true))
-        XCTAssertEqual(LogFormatter.Attributes.Date(format: "HH:mm:ss"), LogFormatter.Attributes.Date(format: "HH:mm:ss"))
+        XCTAssertEqual(LogFormatter.Attributes.level, LogFormatter.Attributes.level)
+        XCTAssertEqual(LogFormatter.Attributes.fileName(fullPath: true, fileExtension: true), LogFormatter.Attributes.fileName(fullPath: true, fileExtension: true))
+        XCTAssertEqual(LogFormatter.Attributes.date(format: "HH:mm:ss"), LogFormatter.Attributes.date(format: "HH:mm:ss"))
         
-        XCTAssertNotEqual(LogFormatter.Attributes.Level, LogFormatter.Attributes.Message)
-        XCTAssertNotEqual(LogFormatter.Attributes.FileName(fullPath: true, fileExtension: true), LogFormatter.Attributes.FileName(fullPath: false, fileExtension: true))
-        XCTAssertNotEqual(LogFormatter.Attributes.Date(format: "HH:mm:ss"), LogFormatter.Attributes.Date(format: "hH:mm:ss"))
-        XCTAssertNotEqual(LogFormatter.Attributes.FileName(fullPath: true, fileExtension: true), LogFormatter.Attributes.Function)
+        XCTAssertNotEqual(LogFormatter.Attributes.level, LogFormatter.Attributes.message)
+        XCTAssertNotEqual(LogFormatter.Attributes.fileName(fullPath: true, fileExtension: true), LogFormatter.Attributes.fileName(fullPath: false, fileExtension: true))
+        XCTAssertNotEqual(LogFormatter.Attributes.date(format: "HH:mm:ss"), LogFormatter.Attributes.date(format: "hH:mm:ss"))
+        XCTAssertNotEqual(LogFormatter.Attributes.fileName(fullPath: true, fileExtension: true), LogFormatter.Attributes.function)
     }
 }

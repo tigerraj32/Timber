@@ -10,32 +10,32 @@ import Foundation
 
 /// Logger; a small logging framework to help you debug your app and filter your logs
 
-public class Logger {
+open class Logger {
     
     /// Determines whether or not the logger is enabled
-    public var enabled: Bool = true
+    open var enabled: Bool = true
     
     /// Sets the minimum log level of the logger.
-    public var minLevel: LogLevel
+    open var minLevel: LogLevel
     
     /// Sets the terminator of a log line in the console.
-    public var terminator: String = "\n"
+    open var terminator: String = "\n"
     
     /// Sets the separator of elements in the log message.
-    public var separator: String = ", "
+    open var separator: String = ", "
     
     /// Sets how the log message should be formatted.
     /// See the class for more info.
-    public var logFormat: LogFormat
+    open var logFormat: LogFormat
     
     /// More useful for testing purposes; will perform the log to a pipe or console on the current thread
-    public var useCurrentThread: Bool = false
+    open var useCurrentThread: Bool = false
     
     /// Sets the pipe used for output. Default (nil) refers to the console
-    public var pipe: NSPipe?
+    open var pipe: Pipe?
     
     /// Keeps track of the minimum log level for each file
-    private var logLevels = [String: LogLevel]()
+    fileprivate var logLevels = [String: LogLevel]()
     
     /** The queue that the logs will take place on
      Log formatting could be an quite expensive feature and should not block the main thread
@@ -51,11 +51,11 @@ public class Logger {
      Which may certainly not be the case in a concurrent queue as the blocks are run asynchronously.
      */
     
-    private let logQueue = dispatch_queue_create("logger.queue", DISPATCH_QUEUE_SERIAL)
+    fileprivate let logQueue = DispatchQueue(label: "logger.queue", attributes: [])
     
     /// The shared instance of the Logger preventing the user from needing to create
     /// a new instance of `Logger` everytime that a message should be logged
-    public static var shared = Logger()
+    open static var shared = Logger()
     
     // MARK: Custom initialiser
     
@@ -65,7 +65,7 @@ public class Logger {
      - Parameter logFormat: The format in which the log message should be generated
      */
     
-    public init(minLevel: LogLevel = .Debug, logFormat: LogFormat = LogFormat.defaultLogFormat) {
+    public init(minLevel: LogLevel = .debug, logFormat: LogFormat = LogFormat.defaultLogFormat) {
         self.minLevel = minLevel
         self.logFormat = logFormat
     }
@@ -78,7 +78,7 @@ public class Logger {
      - Parameter filePath: **Should not be overwritten**. It's used to determine the filename of the caller
      */
     
-    public func registerFile(level: LogLevel, filePath: String = #file) {
+    open func registerFile(_ level: LogLevel, filePath: String = #file) {
         let fileName = filePath.lastPathComponent.stringByDeletingPathExtension
         logLevels[fileName] = level
     }
@@ -95,7 +95,7 @@ public class Logger {
      - Parameter function: Determines the function that triggered the call
      */
     
-    public func log(level: LogLevel, message: [CVarArgType], filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+    open func log(_ level: LogLevel, message: [CVarArg], filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
         guard enabled == true else {
             return
         }
@@ -110,11 +110,11 @@ public class Logger {
         }
         
         let formatBlock = {
-            let logFormatter = LogFormatter(format: self.logFormat, logLevel: level, filePath: filePath, line: line, column: column, function: function, message: message.reduce("", combine: { (combinator, obj) in
+            let logFormatter = LogFormatter(format: self.logFormat, logLevel: level, filePath: filePath, line: line, column: column, function: function, message: message.reduce("", { (combinator, obj) in
                 if combinator.characters.count == 0 {
-                    return String(obj)
+                    return String(describing: obj)
                 }
-                return combinator + self.separator + String(obj)
+                return combinator + self.separator + String(describing: obj)
             }), terminator: self.terminator)
             
             let logMessage = logFormatter.formattedLogMessage()
@@ -132,7 +132,7 @@ public class Logger {
             formatBlock()
         }
         else {
-            dispatch_async(logQueue, formatBlock)
+            logQueue.async(execute: formatBlock)
         }
     }
     
@@ -142,12 +142,12 @@ public class Logger {
      - Parameter message: The formatted message to be logged
      */
     
-    internal func logTo(pipe: NSPipe, message: String) {
+    internal func logTo(_ pipe: Pipe, message: String) {
         let fh = pipe.fileHandleForWriting
-        guard let data = message.dataUsingEncoding(NSUTF8StringEncoding) else {
+        guard let data = message.data(using: String.Encoding.utf8) else {
             return
         }
-        fh.writeData(data)
+        fh.write(data)
     }
     
     /**
@@ -161,8 +161,8 @@ public class Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public func debug(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        log(.Debug, message: message, filePath: filePath, line: line, column: column, function: function)
+    open func debug(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        log(.debug, message: message, filePath: filePath, line: line, column: column, function: function)
     }
     
     /**
@@ -176,8 +176,8 @@ public class Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public func trace(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        log(.Trace, message: message, filePath: filePath, line: line, column: column, function: function)
+    open func trace(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        log(.trace, message: message, filePath: filePath, line: line, column: column, function: function)
     }
     
     /**
@@ -191,8 +191,8 @@ public class Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public func info(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        log(.Info, message: message, filePath: filePath, line: line, column: column, function: function)
+    open func info(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        log(.info, message: message, filePath: filePath, line: line, column: column, function: function)
     }
     
     /**
@@ -206,8 +206,8 @@ public class Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public func warn(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        log(.Warn, message: message, filePath: filePath, line: line, column: column, function: function)
+    open func warn(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        log(.warn, message: message, filePath: filePath, line: line, column: column, function: function)
     }
     
     /**
@@ -221,8 +221,8 @@ public class Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public func error(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        log(.Error, message: message, filePath: filePath, line: line, column: column, function: function)
+    open func error(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        log(.error, message: message, filePath: filePath, line: line, column: column, function: function)
     }
     
     /**
@@ -236,7 +236,7 @@ public class Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public func fatal(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        log(.Fatal, message: message, filePath: filePath, line: line, column: column, function: function)
+    open func fatal(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        log(.fatal, message: message, filePath: filePath, line: line, column: column, function: function)
     }
 }

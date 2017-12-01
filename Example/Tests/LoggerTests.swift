@@ -11,15 +11,15 @@ import Timber
 
 class StubbedLogger: Logger {
     
-    typealias LoggedBlock = (level: Logger.LogLevel, message: [CVarArgType], filePath: String, line: Int, column: Int, function: String) -> ()
+    typealias LoggedBlock = (_ level: Logger.LogLevel, _ message: [CVarArg], _ filePath: String, _ line: Int, _ column: Int, _ function: String) -> ()
     
     let loggedBlock: LoggedBlock
-    init(loggedBlock: LoggedBlock) {
+    init(loggedBlock: @escaping LoggedBlock) {
         self.loggedBlock = loggedBlock
     }
     
-    override func log(level: Logger.LogLevel, message: [CVarArgType], filePath: String, line: Int, column: Int, function: String) {
-        loggedBlock(level: level, message: message, filePath: filePath, line: line, column: column, function: function)
+    override func log(_ level: Logger.LogLevel, message: [CVarArg], filePath: String, line: Int, column: Int, function: String) {
+        loggedBlock(level, message, filePath, line, column, function)
     }
 }
 
@@ -31,87 +31,87 @@ class LoggerTests: XCTestCase {
     
     func testInitialisers() {
         let logFormat = LogFormat.defaultLogFormat
-        let logger1 = Logger(minLevel: .All, logFormat: logFormat)
+        let logger1 = Logger(minLevel: .all, logFormat: logFormat)
         
-        XCTAssertEqual(logger1.minLevel, Logger.LogLevel.All)
+        XCTAssertEqual(logger1.minLevel, Logger.LogLevel.all)
         XCTAssertEqual(logger1.logFormat, logFormat)
         
-        let logger2 = Logger(minLevel: .Debug)
-        XCTAssertEqual(logger2.minLevel, Logger.LogLevel.Debug)
+        let logger2 = Logger(minLevel: .debug)
+        XCTAssertEqual(logger2.minLevel, Logger.LogLevel.debug)
     }
     
-    func fulfillAfter(expectation: XCTestExpectation, time: Double = 4) {
-        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(time * Double(NSEC_PER_SEC)))
-        dispatch_after(delayTime, dispatch_get_main_queue()) {
+    func fulfillAfter(_ expectation: XCTestExpectation, time: Double = 4) {
+        let delayTime = DispatchTime.now() + Double(Int64(time * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+        DispatchQueue.main.asyncAfter(deadline: delayTime) {
             expectation.fulfill()
         }
     }
     
     func testDisabledLoggerDoesntLog() {
         let logger = Logger()
-        let pipe = NSPipe()
+        let pipe = Pipe()
 
         logger.pipe = pipe
         logger.enabled = false
         logger.useCurrentThread = true
 
-        let writtenData = "written data".dataUsingEncoding(NSUTF8StringEncoding)!
-        logger.pipe!.fileHandleForWriting.writeData(writtenData)
+        let writtenData = "written data".data(using: String.Encoding.utf8)!
+        logger.pipe!.fileHandleForWriting.write(writtenData)
 
         logger.debug("Test message")
 
-        XCTAssertEqual(logger.pipe!.fileHandleForReading.availableData.length, writtenData.length)
+        XCTAssertEqual(logger.pipe!.fileHandleForReading.availableData.count, writtenData.count)
     }
     
     func testSettingFileLogLevelDoesntReceiveLog() {
         let logger = Logger()
-        let pipe = NSPipe()
+        let pipe = Pipe()
         
         logger.pipe = pipe
         logger.useCurrentThread = true
         
-        logger.registerFile(.Fatal)
+        logger.registerFile(.fatal)
         
-        let writtenData = "written data".dataUsingEncoding(NSUTF8StringEncoding)!
-        logger.pipe!.fileHandleForWriting.writeData(writtenData)
+        let writtenData = "written data".data(using: String.Encoding.utf8)!
+        logger.pipe!.fileHandleForWriting.write(writtenData)
         
         logger.error("This should not be logged")
         
-        XCTAssertEqual(logger.pipe!.fileHandleForReading.availableData.length, writtenData.length)
+        XCTAssertEqual(logger.pipe!.fileHandleForReading.availableData.count, writtenData.count)
     }
     
     func testSettingFileLogLevelReceivesLog() {
-        let pipe = NSPipe()
+        let pipe = Pipe()
         let localLogger = Logger()
         
         localLogger.pipe = pipe
         pipe.fileHandleForReading.waitForDataInBackgroundAndNotify()
         
-        expectationForNotification(NSFileHandleDataAvailableNotification, object: pipe.fileHandleForReading) { notification -> Bool in
-            guard let fh = notification.object as? NSFileHandle else {
+        expectation(forNotification: NSNotification.Name.NSFileHandleDataAvailable, object: pipe.fileHandleForReading) { notification -> Bool in
+            guard let fh = notification.object as? FileHandle else {
                 return false
             }
             
             let data = fh.availableData
-            XCTAssertTrue(data.length > 0)
-            XCTAssertTrue(String(data: data, encoding: NSUTF8StringEncoding)!.containsString("This should be logged"))
+            XCTAssertTrue(data.count > 0)
+            XCTAssertTrue(String(data: data, encoding: String.Encoding.utf8)!.contains("This should be logged"))
             
             return true
         }
         
-        localLogger.registerFile(.Error)
+        localLogger.registerFile(.error)
         
         // Log some data
         localLogger.error("This should be logged")
         
         // Wait for the expectation to be fulfilled
-        waitForExpectationsWithTimeout(5) { _ in }
+        waitForExpectations(timeout: 5) { _ in }
     }
     
-    func performTestWithExpectedLogLevel(expectedLogLevel: Logger.LogLevel) {
-        let expectation = expectationWithDescription(NSUUID().UUIDString + ": \(expectedLogLevel)")
+    func performTestWithExpectedLogLevel(_ expectedLogLevel: Logger.LogLevel) {
+        let expectation = self.expectation(description: UUID().uuidString + ": \(expectedLogLevel)")
         
-        let logMessage = NSUUID().UUIDString
+        let logMessage = UUID().uuidString
         
         let localLogger = StubbedLogger(loggedBlock: { level, message, _, _, _, _ in
             XCTAssertEqual(level, expectedLogLevel)
@@ -120,22 +120,22 @@ class LoggerTests: XCTestCase {
         })
         
         switch expectedLogLevel {
-        case .Debug:
+        case .debug:
             localLogger.debug(logMessage)
             break
-        case .Error:
+        case .error:
             localLogger.error(logMessage)
             break
-        case .Fatal:
+        case .fatal:
             localLogger.fatal(logMessage)
             break
-        case .Info:
+        case .info:
             localLogger.info(logMessage)
             break
-        case .Trace:
+        case .trace:
             localLogger.trace(logMessage)
             break
-        case .Warn:
+        case .warn:
             localLogger.warn(logMessage)
             break
         default:
@@ -143,34 +143,34 @@ class LoggerTests: XCTestCase {
             break
         }
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func testAllLogLevel() {
-        performTestWithExpectedLogLevel(.All)
+        performTestWithExpectedLogLevel(.all)
     }
     
     func testDebugLogLevel() {
-        performTestWithExpectedLogLevel(.Debug)
+        performTestWithExpectedLogLevel(.debug)
     }
     
     func testTraceLogLevel() {
-        performTestWithExpectedLogLevel(.Trace)
+        performTestWithExpectedLogLevel(.trace)
     }
     
     func testInfoLogLevel() {
-        performTestWithExpectedLogLevel(.Info)
+        performTestWithExpectedLogLevel(.info)
     }
     
     func testWarnLogLevel() {
-        performTestWithExpectedLogLevel(.Warn)
+        performTestWithExpectedLogLevel(.warn)
     }
     
     func testErrorLogLevel() {
-        performTestWithExpectedLogLevel(.Error)
+        performTestWithExpectedLogLevel(.error)
     }
     
     func testFatalLogLevel() {
-        performTestWithExpectedLogLevel(.Fatal)
+        performTestWithExpectedLogLevel(.fatal)
     }
 }

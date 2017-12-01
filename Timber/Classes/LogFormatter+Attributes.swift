@@ -21,13 +21,13 @@ extension LogFormatter {
      - Date: The date & time that the log was triggered at. Format: the format of the date. See http://waracle.net/iphone-nsdateformatter-date-formatting-table/ for more info.
      */
     public enum Attributes{
-        case Level
-        case FileName(fullPath: Bool, fileExtension: Bool)
-        case Line
-        case Column
-        case Function
-        case Message
-        case Date(format: String)
+        case level
+        case fileName(fullPath: Bool, fileExtension: Bool)
+        case line
+        case column
+        case function
+        case message
+        case date(format: String)
     }
 }
 
@@ -35,11 +35,11 @@ extension LogFormatter.Attributes: Equatable {}
 
 public func ==(lhs: LogFormatter.Attributes, rhs: LogFormatter.Attributes) -> Bool {
     switch (lhs, rhs) {
-    case (.Level, .Level), (.Line, .Line), (.Column, .Column), (.Function, .Function), (.Message, .Message):
+    case (.level, .level), (.line, .line), (.column, .column), (.function, .function), (.message, .message):
         return true
-    case (let .FileName(fullPath: fp1, fileExtension: fe1), let .FileName(fullPath: fp2, fileExtension: fe2)):
+    case (let .fileName(fullPath: fp1, fileExtension: fe1), let .fileName(fullPath: fp2, fileExtension: fe2)):
         return fp1 == fp2 && fe1 == fe2
-    case (let .Date(format: fmt1), let .Date(format: fm2)):
+    case (let .date(format: fmt1), let .date(format: fm2)):
         return fmt1 == fm2
     default:
         return false

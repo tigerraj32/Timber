@@ -14,7 +14,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Logger.registerFile(.Error)
+        Logger.registerFile(.error)
         
         Logger.debug("This doesn't log")
         Logger.trace("This doesn't log")

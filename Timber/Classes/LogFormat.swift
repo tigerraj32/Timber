@@ -34,11 +34,11 @@ public struct LogFormat {
      */
     
     public static var defaultLogFormat = LogFormat(template: "[%@ %@ %@:%@] %@", attributes: [
-        LogFormatter.Attributes.Level,
-        LogFormatter.Attributes.Date(format: "HH:mm:ss"),
-        LogFormatter.Attributes.FileName(fullPath: false, fileExtension: true),
-        LogFormatter.Attributes.Line,
-        LogFormatter.Attributes.Message
+        LogFormatter.Attributes.level,
+        LogFormatter.Attributes.date(format: "HH:mm:ss"),
+        LogFormatter.Attributes.fileName(fullPath: false, fileExtension: true),
+        LogFormatter.Attributes.line,
+        LogFormatter.Attributes.message
         ])
 }
 
@@ -49,12 +49,12 @@ public func ==(lhs: LogFormat, rhs: LogFormat) -> Bool {
         return false
     }
     
-    guard let lhsAttr = lhs.attributes, rhsAttr = rhs.attributes where lhsAttr.count == rhsAttr.count else {
+    guard let lhsAttr = lhs.attributes, let rhsAttr = rhs.attributes, lhsAttr.count == rhsAttr.count else {
         return false
     }
     
     var equalFlag = true
-    for (idx, attr) in lhsAttr.enumerate() {
+    for (idx, attr) in lhsAttr.enumerated() {
         if attr != rhsAttr[idx] {
             equalFlag = false
             break

@@ -27,14 +27,14 @@ extension Logger {
      */
     
     public enum LogLevel: Int, CustomStringConvertible {
-        case All = 0
-        case Debug
-        case Trace
-        case Info
-        case Warn
-        case Error
-        case Fatal
-        case Off
+        case all = 0
+        case debug
+        case trace
+        case info
+        case warn
+        case error
+        case fatal
+        case off
         
         /**
          Converts the LogLevel into a string
@@ -43,21 +43,21 @@ extension Logger {
         
         public var description: String {
             switch self {
-            case .All:
+            case .all:
                 return "All"
-            case .Debug:
+            case .debug:
                 return "Debug"
-            case .Trace:
+            case .trace:
                 return "Trace"
-            case .Info:
+            case .info:
                 return "Info"
-            case .Warn:
+            case .warn:
                 return "Warn"
-            case .Error:
+            case .error:
                 return "Error"
-            case .Fatal:
+            case .fatal:
                 return "Fatal"
-            case .Off:
+            case .off:
                 return "Off"
             }
         }

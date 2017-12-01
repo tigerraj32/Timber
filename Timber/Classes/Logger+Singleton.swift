@@ -15,7 +15,7 @@ extension Logger {
      - Parameter format: The specific LogFormat to be used. Defaults to `LogFormat.defaultLogFormat`
      */
     
-    public class func setFormat(format: LogFormat = LogFormat.defaultLogFormat) {
+    public class func setFormat(_ format: LogFormat = LogFormat.defaultLogFormat) {
         shared.logFormat = format
     }
     
@@ -24,7 +24,7 @@ extension Logger {
      - Parameter enabled: `TRUE` to enable, `FALSE` to disable.
      */
     
-    public class func setEnabled(enabled: Bool) {
+    public class func setEnabled(_ enabled: Bool) {
         shared.enabled = enabled
     }
     
@@ -33,7 +33,7 @@ extension Logger {
      - Parameter minLevel: The min log level to be used.
      */
     
-    public class func setMinLevel(minLevel: LogLevel) {
+    public class func setMinLevel(_ minLevel: LogLevel) {
         shared.minLevel = minLevel
     }
     
@@ -42,7 +42,7 @@ extension Logger {
      - Parameter terminator: Typically "\n".
      */
     
-    public class func setTerminator(terminator: String) {
+    public class func setTerminator(_ terminator: String) {
         shared.terminator = terminator
     }
     
@@ -51,7 +51,7 @@ extension Logger {
      - Parameter terminator: Typically "\n".
      */
     
-    public class func setSeparator(separator: String) {
+    public class func setSeparator(_ separator: String) {
         shared.separator = separator
     }
     
@@ -61,7 +61,7 @@ extension Logger {
      - Parameter filePath: **Should not be overwritten**. It's used to determine the filename of the caller
      */
     
-    public class func registerFile(level: LogLevel, filePath: String = #file) {
+    public class func registerFile(_ level: LogLevel, filePath: String = #file) {
         shared.registerFile(level, filePath: filePath)
     }
     
@@ -76,8 +76,8 @@ extension Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public class func debug(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        shared.log(.Debug, message: message, filePath: filePath, line: line, column: column, function: function)
+    public class func debug(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        shared.log(.debug, message: message, filePath: filePath, line: line, column: column, function: function)
     }
     
     /**
@@ -91,8 +91,8 @@ extension Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public class func trace(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        shared.log(.Trace, message: message, filePath: filePath, line: line, column: column, function: function)
+    public class func trace(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        shared.log(.trace, message: message, filePath: filePath, line: line, column: column, function: function)
     }
     
     /**
@@ -106,8 +106,8 @@ extension Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public class func info(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        shared.log(.Info, message: message, filePath: filePath, line: line, column: column, function: function)
+    public class func info(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        shared.log(.info, message: message, filePath: filePath, line: line, column: column, function: function)
     }
     
     /**
@@ -121,8 +121,8 @@ extension Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public class func warn(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        shared.log(.Warn, message: message, filePath: filePath, line: line, column: column, function: function)
+    public class func warn(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        shared.log(.warn, message: message, filePath: filePath, line: line, column: column, function: function)
     }
     
     /**
@@ -136,8 +136,8 @@ extension Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public class func error(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        shared.log(.Error, message: message, filePath: filePath, line: line, column: column, function: function)
+    public class func error(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        shared.log(.error, message: message, filePath: filePath, line: line, column: column, function: function)
     }
     
     /**
@@ -151,7 +151,7 @@ extension Logger {
      - Parameter function: Determines the function that triggered the call.
      */
     
-    public class func fatal(message: CVarArgType..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
-        shared.log(.Fatal, message: message, filePath: filePath, line: line, column: column, function: function)
+    public class func fatal(_ message: CVarArg..., filePath: String = #file, line: Int = #line, column: Int = #column, function: String = #function) {
+        shared.log(.fatal, message: message, filePath: filePath, line: line, column: column, function: function)
     }
 }

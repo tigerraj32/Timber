@@ -13,11 +13,11 @@ class LogFormatTests: XCTestCase {
     
     func testLogFormat() {
         let attributes: [LogFormatter.Attributes] = [ // same as defaultLogFormat
-            LogFormatter.Attributes.Level,
-            LogFormatter.Attributes.Date(format: "HH:mm:ss"),
-            LogFormatter.Attributes.FileName(fullPath: false, fileExtension: true),
-            LogFormatter.Attributes.Line,
-            LogFormatter.Attributes.Message
+            LogFormatter.Attributes.level,
+            LogFormatter.Attributes.date(format: "HH:mm:ss"),
+            LogFormatter.Attributes.fileName(fullPath: false, fileExtension: true),
+            LogFormatter.Attributes.line,
+            LogFormatter.Attributes.message
         ]
         
         let template = "[%@ %@ %@:%@] %@"
@@ -33,11 +33,11 @@ class LogFormatTests: XCTestCase {
     
     func testEquatable() {
         let attributes: [LogFormatter.Attributes] = [ // same as defaultLogFormat
-            LogFormatter.Attributes.Level,
-            LogFormatter.Attributes.Date(format: "HH:mm:ss"),
-            LogFormatter.Attributes.FileName(fullPath: false, fileExtension: true),
-            LogFormatter.Attributes.Line,
-            LogFormatter.Attributes.Message
+            LogFormatter.Attributes.level,
+            LogFormatter.Attributes.date(format: "HH:mm:ss"),
+            LogFormatter.Attributes.fileName(fullPath: false, fileExtension: true),
+            LogFormatter.Attributes.line,
+            LogFormatter.Attributes.message
         ]
         
         let template = "[%@ %@ %@:%@] %@"
@@ -48,11 +48,11 @@ class LogFormatTests: XCTestCase {
         XCTAssertNotEqual(LogFormat(template: otherTemplate, attributes: attributes), LogFormat(template: template, attributes: attributes))
         
         let otherAttributes: [LogFormatter.Attributes] = [ // same as defaultLogFormat
-            LogFormatter.Attributes.Level,
-            LogFormatter.Attributes.Date(format: "HH:mm:ss"),
-            LogFormatter.Attributes.FileName(fullPath: true, fileExtension: true),
-            LogFormatter.Attributes.Line,
-            LogFormatter.Attributes.Message
+            LogFormatter.Attributes.level,
+            LogFormatter.Attributes.date(format: "HH:mm:ss"),
+            LogFormatter.Attributes.fileName(fullPath: true, fileExtension: true),
+            LogFormatter.Attributes.line,
+            LogFormatter.Attributes.message
         ]
         
         XCTAssertNotEqual(LogFormat(template: template, attributes: otherAttributes), LogFormat(template: template, attributes: attributes))
